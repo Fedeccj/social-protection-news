@@ -166,10 +166,10 @@
   </div>
   <div class="masthead-title">
     <h1>Social Protection<br>Daily</h1>
-    <div class="subtitle">World Bank · UN · EU · ILO · OECD · WFP · UNICEF · Reuters · BBC</div>
+    <div class="subtitle">World Bank · UN · EU · ILO · OECD · WFP · UNICEF · IMF · IDB · AfDB · ADB · IFPRI · ODI · Brookings · HRW · Guardian</div>
     <div class="edition-bar">
       <span>🌍 Global Coverage</span>
-      <span>📋 5 Topics</span>
+      <span>📋 5 Topics · 18 Sources</span>
       <span>🗺 4 Regions</span>
       <span>🔄 Auto-refresh every 30 min</span>
     </div>
@@ -234,7 +234,7 @@
 </main>
 <div class="no-results" id="no-results">No articles match your search. Try different keywords.</div>
 
-<footer>Social Protection Daily — World Bank · UN/UNDP · EU · ILO · OECD · WFP · UNICEF · Reuters · BBC — Auto-refreshes every 30 minutes</footer>
+<footer>Social Protection Daily — 18 Sources: World Bank · UN · EU · ILO · OECD · WFP · UNICEF · IMF · IDB · AfDB · ADB · IFPRI · ODI · Brookings · HRW · Reuters · BBC · Guardian — Auto-refreshes every 30 min</footer>
 
 <script>
 // ── SOURCES ──
@@ -263,6 +263,32 @@ const SOURCES = [
   { id:"bbc", name:"BBC News", color:"#BB1919", textColor:"white", initials:"BBC",
     feeds:["https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/world/rss.xml",
            "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/business/rss.xml"] },
+  { id:"imf", name:"IMF", color:"#003A6C", textColor:"white", initials:"IMF",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.imf.org/en/News/rss?language=eng",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.imf.org/external/pubs/ft/wp/2024/data/wp24rss.xml"] },
+  { id:"iadb", name:"Inter-American Dev. Bank", color:"#009CA6", textColor:"white", initials:"IDB",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://blogs.iadb.org/feed/",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.iadb.org/en/rss/news"] },
+  { id:"afdb", name:"African Development Bank", color:"#00843D", textColor:"white", initials:"AfDB",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.afdb.org/en/rss/news"] },
+  { id:"adb", name:"Asian Development Bank", color:"#E8192C", textColor:"white", initials:"ADB",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.adb.org/news/rss",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://blogs.adb.org/feed"] },
+  { id:"ifpri", name:"IFPRI", color:"#6B8E23", textColor:"white", initials:"IFPRI",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.ifpri.org/rss.xml",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.ifpri.org/blog/feed"] },
+  { id:"odi", name:"ODI", color:"#C8102E", textColor:"white", initials:"ODI",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://odi.org/en/rss/",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://odi.org/en/insights/rss/"] },
+  { id:"brookings", name:"Brookings Institution", color:"#1D3557", textColor:"white", initials:"BRK",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.brookings.edu/feed/",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.brookings.edu/topic/social-welfare/feed/"] },
+  { id:"hrw", name:"Human Rights Watch", color:"#E2001A", textColor:"white", initials:"HRW",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.hrw.org/rss/news",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.hrw.org/rss/world-report-chapters"] },
+  { id:"guardian", name:"The Guardian — Global Dev.", color:"#052962", textColor:"white", initials:"GRD",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.theguardian.com/global-development/rss",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.theguardian.com/society/rss"] },
 ];
 
 // ── KEYWORDS ──
