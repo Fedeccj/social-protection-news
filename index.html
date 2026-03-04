@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Social Protection Intelligence</title>
+<title>Social Protection Daily</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -17,349 +17,141 @@
     --rule: #d4cfc6;
     --card-bg: #faf8f3;
   }
-
   * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: 'DM Sans', sans-serif; min-height: 100vh; }
 
-  body {
-    background: var(--paper);
-    color: var(--ink);
-    font-family: 'DM Sans', sans-serif;
-    min-height: 100vh;
-  }
+  /* MASTHEAD */
+  .masthead { border-bottom: 3px double var(--ink); padding: 0 2rem; background: var(--paper); }
+  .masthead-top { display: flex; justify-content: space-between; align-items: center; padding: 0.6rem 0; border-bottom: 1px solid var(--rule); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); flex-wrap: wrap; gap: 0.5rem; }
+  .masthead-title { text-align: center; padding: 1.2rem 0 0.8rem; }
+  .masthead-title h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; letter-spacing: -0.02em; line-height: 1; text-transform: uppercase; }
+  .masthead-title .subtitle { font-size: 0.7rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-top: 0.4rem; }
+  .edition-bar { display: flex; justify-content: center; gap: 1.5rem; margin-top: 0.8rem; padding-top: 0.6rem; border-top: 1px solid var(--rule); font-size: 0.67rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); flex-wrap: wrap; }
 
-  /* ── MASTHEAD ── */
-  .masthead {
-    border-bottom: 3px double var(--ink);
-    padding: 0 2rem;
-    background: var(--paper);
-  }
-  .masthead-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.6rem 0;
-    border-bottom: 1px solid var(--rule);
-    font-size: 0.72rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .masthead-top .date-line { font-weight: 500; }
-  .masthead-title {
-    text-align: center;
-    padding: 1.2rem 0 0.8rem;
-  }
-  .masthead-title h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 5vw, 4rem);
-    font-weight: 900;
-    letter-spacing: -0.02em;
-    line-height: 1;
-    text-transform: uppercase;
-  }
-  .masthead-title .subtitle {
-    font-size: 0.72rem;
-    letter-spacing: 0.25em;
-    text-transform: uppercase;
-    color: var(--muted);
-    margin-top: 0.4rem;
-  }
-  .masthead-title .edition-bar {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-top: 0.8rem;
-    padding-top: 0.6rem;
-    border-top: 1px solid var(--rule);
-    font-size: 0.68rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-  .edition-bar span { display: flex; align-items: center; gap: 0.3rem; }
+  /* AUTO-REFRESH INDICATOR */
+  .refresh-indicator { display: flex; align-items: center; gap: 0.4rem; font-size: 0.67rem; color: var(--muted); }
+  .refresh-dot { width: 6px; height: 6px; border-radius: 50%; background: #27ae60; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.8)} }
 
-  /* ── FILTERS BAR ── */
-  .filters-bar {
-    background: var(--ink);
-    color: var(--paper);
-    padding: 0.7rem 2rem;
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-  .filters-bar .label {
-    font-size: 0.65rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    color: #888;
-    margin-right: 0.5rem;
-  }
-  .filter-chip {
-    padding: 0.25rem 0.8rem;
-    border: 1px solid #444;
-    border-radius: 2px;
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    cursor: pointer;
-    transition: all 0.15s;
-    background: transparent;
-    color: #ccc;
-    font-family: 'DM Sans', sans-serif;
-  }
-  .filter-chip.active {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-  .filter-chip:hover:not(.active) { border-color: #888; color: white; }
+  /* TICKER */
+  .ticker-wrap { background: var(--accent2); color: white; overflow: hidden; padding: 0.4rem 0; font-size: 0.7rem; letter-spacing: 0.05em; }
+  .ticker-inner { display: flex; gap: 4rem; white-space: nowrap; animation: ticker 60s linear infinite; }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .ticker-item::before { content: '◆ '; color: rgba(255,255,255,0.4); }
 
-  /* ── CONTROLS ── */
-  .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0.8rem 2rem;
-    border-bottom: 1px solid var(--rule);
-    background: var(--paper);
-  }
-  .refresh-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1.2rem;
-    background: var(--ink);
-    color: var(--paper);
-    border: none;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
+  /* SEARCH BAR */
+  .search-bar { background: var(--ink); padding: 0.8rem 2rem; display: flex; align-items: center; gap: 1rem; }
+  .search-input-wrap { flex: 1; max-width: 500px; position: relative; }
+  .search-input { width: 100%; padding: 0.55rem 1rem 0.55rem 2.4rem; background: rgba(255,255,255,0.08); border: 1px solid #444; color: white; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; outline: none; transition: border 0.2s; border-radius: 2px; }
+  .search-input::placeholder { color: #666; }
+  .search-input:focus { border-color: #888; background: rgba(255,255,255,0.12); }
+  .search-icon { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: #666; font-size: 0.9rem; pointer-events: none; }
+  .search-clear { position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; font-size: 1rem; display: none; }
+  .search-clear.visible { display: block; }
+  .search-clear:hover { color: white; }
+  .search-results-count { font-size: 0.7rem; color: #888; white-space: nowrap; }
+
+  /* FILTERS */
+  .filters-wrap { background: #111; border-bottom: 1px solid #222; }
+  .filters-row { padding: 0.6rem 2rem; display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+  .filters-row .label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: #555; margin-right: 0.3rem; white-space: nowrap; }
+  .filter-chip { padding: 0.22rem 0.75rem; border: 1px solid #333; border-radius: 2px; font-size: 0.68rem; letter-spacing: 0.04em; cursor: pointer; transition: all 0.15s; background: transparent; color: #999; font-family: 'DM Sans', sans-serif; white-space: nowrap; }
+  .filter-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
+  .filter-chip:hover:not(.active) { border-color: #666; color: #ddd; }
+  .filters-divider { width: 1px; height: 20px; background: #333; margin: 0 0.3rem; }
+
+  /* CONTROLS */
+  .controls { display: flex; justify-content: space-between; align-items: center; padding: 0.7rem 2rem; border-bottom: 1px solid var(--rule); background: var(--paper); flex-wrap: wrap; gap: 0.5rem; }
+  .controls-left { display: flex; align-items: center; gap: 0.8rem; }
+  .refresh-btn { display: flex; align-items: center; gap: 0.5rem; padding: 0.45rem 1rem; background: var(--ink); color: var(--paper); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: background 0.2s; }
   .refresh-btn:hover { background: var(--accent); }
-  .refresh-btn.loading { opacity: 0.6; cursor: not-allowed; }
+  .refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .favorites-btn { display: flex; align-items: center; gap: 0.4rem; padding: 0.45rem 1rem; background: transparent; color: var(--ink); border: 1px solid var(--rule); font-family: 'DM Sans', sans-serif; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; }
+  .favorites-btn:hover, .favorites-btn.active { background: var(--gold); border-color: var(--gold); color: white; }
   .spin { display: inline-block; }
   .spin.active { animation: spin 1s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .stats-line {
-    font-size: 0.7rem;
-    letter-spacing: 0.05em;
-    color: var(--muted);
-  }
+  @keyframes spin { to{transform:rotate(360deg)} }
+  .stats-line { font-size: 0.68rem; color: var(--muted); }
   .stats-line strong { color: var(--ink); }
+  .next-refresh { font-size: 0.65rem; color: var(--muted); }
 
-  /* ── MAIN GRID ── */
-  .content {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 1.5rem 2rem;
-  }
+  /* MAIN GRID */
+  .content { max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; }
+  .source-section { margin-bottom: 2.5rem; animation: fadeIn 0.4s ease both; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+  .source-header { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 1rem; padding-bottom: 0.6rem; border-bottom: 2px solid var(--ink); }
+  .source-logo { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.58rem; font-weight: 700; flex-shrink: 0; }
+  .source-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 700; }
+  .source-count { margin-left: auto; font-size: 0.63rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); background: var(--rule); padding: 0.15rem 0.5rem; }
 
-  /* Source sections */
-  .source-section {
-    margin-bottom: 2.5rem;
-    animation: fadeIn 0.4s ease both;
-  }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-
-  .source-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.6rem;
-    border-bottom: 2px solid var(--ink);
-  }
-  .source-logo {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    flex-shrink: 0;
-  }
-  .source-name {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-  }
-  .source-count {
-    margin-left: auto;
-    font-size: 0.65rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: var(--rule);
-    padding: 0.2rem 0.6rem;
-  }
-
-  /* Article cards */
-  .articles-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 1px;
-    background: var(--rule);
-    border: 1px solid var(--rule);
-  }
-  .article-card {
-    background: var(--card-bg);
-    padding: 1.2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    transition: background 0.15s;
-    position: relative;
-  }
+  /* ARTICLE CARDS */
+  .articles-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .article-card { background: var(--card-bg); padding: 1.1rem; display: flex; flex-direction: column; gap: 0.45rem; transition: background 0.15s; position: relative; }
   .article-card:hover { background: white; }
-  .article-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0;
-    width: 3px;
-    height: 100%;
-    background: transparent;
-    transition: background 0.15s;
-  }
+  .article-card::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:transparent; transition:background 0.15s; }
   .article-card:hover::before { background: var(--accent); }
+  .article-card.favorited { background: #fffbf0; }
+  .article-card.favorited::before { background: var(--gold); }
+  .article-card.hidden { display: none; }
 
-  .article-tags {
-    display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-  }
-  .tag {
-    font-size: 0.6rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    padding: 0.15rem 0.5rem;
-    border: 1px solid currentColor;
-    border-radius: 1px;
-  }
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; }
+  .article-tags { display: flex; gap: 0.3rem; flex-wrap: wrap; flex: 1; }
+  .tag { font-size: 0.58rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.12rem 0.45rem; border: 1px solid currentColor; border-radius: 1px; }
   .tag-pension    { color: #8e44ad; }
   .tag-poverty    { color: var(--accent); }
   .tag-disability { color: #27ae60; }
   .tag-unemployment { color: var(--accent2); }
   .tag-family     { color: var(--gold); }
   .tag-general    { color: var(--muted); }
+  .tag-africa     { color: #d35400; }
+  .tag-asia       { color: #16a085; }
+  .tag-latam      { color: #2980b9; }
+  .tag-europe     { color: #8e44ad; }
 
-  .article-title {
-    font-family: 'Playfair Display', serif;
-    font-size: 0.95rem;
-    font-weight: 700;
-    line-height: 1.35;
-    color: var(--ink);
-  }
-  .article-title a {
-    color: inherit;
-    text-decoration: none;
-  }
+  .favorite-btn { background: none; border: none; cursor: pointer; font-size: 1rem; padding: 0; color: var(--rule); transition: color 0.15s; flex-shrink: 0; line-height: 1; }
+  .favorite-btn:hover { color: var(--gold); }
+  .favorite-btn.active { color: var(--gold); }
+
+  .article-title { font-family: 'Playfair Display', serif; font-size: 0.92rem; font-weight: 700; line-height: 1.35; color: var(--ink); }
+  .article-title a { color: inherit; text-decoration: none; }
   .article-title a:hover { color: var(--accent); }
+  .article-summary { font-size: 0.76rem; line-height: 1.6; color: var(--muted); flex: 1; }
+  .article-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.63rem; letter-spacing: 0.05em; color: var(--muted); text-transform: uppercase; padding-top: 0.4rem; border-top: 1px solid var(--rule); margin-top: auto; }
 
-  .article-summary {
-    font-size: 0.78rem;
-    line-height: 1.6;
-    color: var(--muted);
-    flex: 1;
-  }
+  /* FAVORITES PANEL */
+  .favorites-panel { display: none; background: #fffbf0; border-bottom: 2px solid var(--gold); padding: 1rem 2rem; }
+  .favorites-panel.visible { display: block; }
+  .favorites-panel h3 { font-family: 'Playfair Display', serif; font-size: 1rem; margin-bottom: 0.8rem; color: var(--gold); }
+  .fav-list { display: flex; flex-direction: column; gap: 0.4rem; max-height: 300px; overflow-y: auto; }
+  .fav-item { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0.8rem; background: white; border: 1px solid var(--rule); gap: 0.8rem; }
+  .fav-item a { font-size: 0.78rem; color: var(--ink); text-decoration: none; flex: 1; font-family: 'Playfair Display', serif; line-height: 1.3; }
+  .fav-item a:hover { color: var(--accent); }
+  .fav-item .fav-source { font-size: 0.62rem; color: var(--muted); white-space: nowrap; }
+  .fav-remove { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 0.9rem; padding: 0 0.2rem; }
+  .fav-remove:hover { color: var(--accent); }
+  .fav-empty { font-size: 0.78rem; color: var(--muted); font-style: italic; }
 
-  .article-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 0.65rem;
-    letter-spacing: 0.06em;
-    color: var(--muted);
-    text-transform: uppercase;
-    padding-top: 0.5rem;
-    border-top: 1px solid var(--rule);
-    margin-top: auto;
-  }
-  .article-date { font-weight: 500; }
+  /* LOADING/EMPTY */
+  .loading-state { text-align: center; padding: 4rem 2rem; color: var(--muted); }
+  .loading-state .big-spinner { font-size: 2rem; animation: spin 1s linear infinite; display: block; margin-bottom: 1rem; }
+  .loading-state p { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; }
+  .empty-state { text-align: center; padding: 3rem 2rem; border: 1px dashed var(--rule); }
+  .empty-state p { font-family: 'Playfair Display', serif; font-style: italic; color: var(--muted); }
 
-  /* ── LOADING / EMPTY ── */
-  .loading-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--muted);
-  }
-  .loading-state .big-spinner {
-    font-size: 2rem;
-    animation: spin 1s linear infinite;
-    display: block;
-    margin-bottom: 1rem;
-  }
-  .loading-state p {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.1rem;
-    font-style: italic;
-  }
+  /* NO RESULTS */
+  .no-results { text-align: center; padding: 2.5rem; color: var(--muted); font-family: 'Playfair Display', serif; font-style: italic; display: none; }
 
-  .empty-state {
-    text-align: center;
-    padding: 3rem 2rem;
-    border: 1px dashed var(--rule);
-  }
-  .empty-state p {
-    font-family: 'Playfair Display', serif;
-    font-style: italic;
-    color: var(--muted);
-  }
+  footer { border-top: 3px double var(--ink); padding: 1rem 2rem; text-align: center; font-size: 0.63rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
 
-  /* ── ERROR BANNER ── */
-  .error-banner {
-    background: #fdf2f2;
-    border: 1px solid #e8b4b4;
-    border-left: 4px solid var(--accent);
-    padding: 0.8rem 1.2rem;
-    margin: 1rem 2rem;
-    font-size: 0.78rem;
-    color: #922b21;
-    display: none;
-  }
-  .error-banner.visible { display: block; }
+  /* SEARCH HIGHLIGHT */
+  mark { background: #fff3b0; color: var(--ink); padding: 0 1px; }
 
-  /* ── TICKER ── */
-  .ticker-wrap {
-    background: var(--accent2);
-    color: white;
-    overflow: hidden;
-    padding: 0.4rem 0;
-    font-size: 0.7rem;
-    letter-spacing: 0.06em;
-  }
-  .ticker-inner {
-    display: flex;
-    gap: 4rem;
-    white-space: nowrap;
-    animation: ticker 40s linear infinite;
-  }
-  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-  .ticker-item::before { content: '◆ '; color: rgba(255,255,255,0.5); }
-
-  /* ── FOOTER ── */
-  footer {
-    border-top: 3px double var(--ink);
-    padding: 1rem 2rem;
-    text-align: center;
-    font-size: 0.65rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--muted);
-  }
-
-  @media (max-width: 600px) {
-    .masthead, .filters-bar, .controls, .content { padding-left: 1rem; padding-right: 1rem; }
+  @media (max-width: 640px) {
+    .masthead, .search-bar, .filters-row, .controls, .content, .favorites-panel { padding-left: 1rem; padding-right: 1rem; }
     .masthead-title h1 { font-size: 1.8rem; }
     .articles-grid { grid-template-columns: 1fr; }
-    .edition-bar { gap: 1rem; flex-wrap: wrap; }
+    .edition-bar { gap: 0.8rem; }
+    .filters-divider { display: none; }
   }
 </style>
 </head>
@@ -368,324 +160,370 @@
 <!-- MASTHEAD -->
 <header class="masthead">
   <div class="masthead-top">
-    <span class="date-line" id="today-date"></span>
+    <span id="today-date"></span>
     <span>Global Social Protection Intelligence</span>
-    <span>Vol. I — Daily Edition</span>
+    <div class="refresh-indicator"><div class="refresh-dot"></div><span id="next-refresh-label">Auto-refresh: 30 min</span></div>
   </div>
   <div class="masthead-title">
     <h1>Social Protection<br>Daily</h1>
-    <div class="subtitle">World Bank · UN · EU · ILO · WFP · UNICEF · Reuters · BBC</div>
+    <div class="subtitle">World Bank · UN · EU · ILO · OECD · WFP · UNICEF · Reuters · BBC</div>
     <div class="edition-bar">
       <span>🌍 Global Coverage</span>
-      <span>📋 Pensions · Poverty · Disability · Unemployment · Family</span>
-      <span>🔄 Live RSS Feeds</span>
+      <span>📋 5 Topics</span>
+      <span>🗺 4 Regions</span>
+      <span>🔄 Auto-refresh every 30 min</span>
     </div>
   </div>
 </header>
 
 <!-- TICKER -->
-<div class="ticker-wrap">
-  <div class="ticker-inner" id="ticker">
-    <span class="ticker-item">Loading latest headlines...</span>
-    <span class="ticker-item">Loading latest headlines...</span>
+<div class="ticker-wrap"><div class="ticker-inner" id="ticker"><span class="ticker-item">Loading headlines…</span><span class="ticker-item">Loading headlines…</span></div></div>
+
+<!-- SEARCH -->
+<div class="search-bar">
+  <div class="search-input-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="search-input" type="text" placeholder="Search by keyword, country, organization… (e.g. Argentina, WFP Syria, pension reform)" autocomplete="off">
+    <span class="search-clear" id="search-clear" onclick="clearSearch()">✕</span>
   </div>
+  <span class="search-results-count" id="search-count"></span>
 </div>
 
 <!-- FILTERS -->
-<div class="filters-bar">
-  <span class="label">Filter:</span>
-  <button class="filter-chip active" data-filter="all">All Topics</button>
-  <button class="filter-chip" data-filter="pension">Pensions</button>
-  <button class="filter-chip" data-filter="poverty">Poverty</button>
-  <button class="filter-chip" data-filter="disability">Disability</button>
-  <button class="filter-chip" data-filter="unemployment">Unemployment</button>
-  <button class="filter-chip" data-filter="family">Family & Children</button>
+<div class="filters-wrap">
+  <div class="filters-row">
+    <span class="label">Topic:</span>
+    <button class="filter-chip active" data-type="topic" data-filter="all">All</button>
+    <button class="filter-chip" data-type="topic" data-filter="pension">Pensions</button>
+    <button class="filter-chip" data-type="topic" data-filter="poverty">Poverty</button>
+    <button class="filter-chip" data-type="topic" data-filter="disability">Disability</button>
+    <button class="filter-chip" data-type="topic" data-filter="unemployment">Unemployment</button>
+    <button class="filter-chip" data-type="topic" data-filter="family">Family & Children</button>
+    <div class="filters-divider"></div>
+    <span class="label">Region:</span>
+    <button class="filter-chip active" data-type="region" data-filter="all">All Regions</button>
+    <button class="filter-chip" data-type="region" data-filter="africa">Africa</button>
+    <button class="filter-chip" data-type="region" data-filter="asia">Asia</button>
+    <button class="filter-chip" data-type="region" data-filter="latam">Latin America</button>
+    <button class="filter-chip" data-type="region" data-filter="europe">Europe</button>
+  </div>
 </div>
 
 <!-- CONTROLS -->
 <div class="controls">
-  <button class="refresh-btn" id="refresh-btn" onclick="loadAllFeeds()">
-    <span class="spin" id="spin-icon">↻</span>
-    <span>Refresh News</span>
-  </button>
-  <div class="stats-line" id="stats-line">Loading...</div>
+  <div class="controls-left">
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAllFeeds()">
+      <span class="spin" id="spin-icon">↻</span> Refresh Now
+    </button>
+    <button class="favorites-btn" id="favorites-btn" onclick="toggleFavoritesPanel()">
+      ★ Favorites <span id="fav-count-badge"></span>
+    </button>
+  </div>
+  <div class="stats-line" id="stats-line">Loading…</div>
 </div>
 
-<div class="error-banner" id="error-banner"></div>
+<!-- FAVORITES PANEL -->
+<div class="favorites-panel" id="favorites-panel">
+  <h3>★ Saved Articles</h3>
+  <div class="fav-list" id="fav-list"></div>
+</div>
 
-<!-- MAIN CONTENT -->
+<!-- CONTENT -->
 <main class="content" id="main-content">
-  <div class="loading-state">
-    <span class="big-spinner">⟳</span>
-    <p>Fetching latest dispatches from global sources...</p>
-  </div>
+  <div class="loading-state"><span class="big-spinner">⟳</span><p>Fetching latest dispatches…</p></div>
 </main>
+<div class="no-results" id="no-results">No articles match your search. Try different keywords.</div>
 
-<footer>
-  <p>Social Protection Daily &mdash; Sources: World Bank, UN/UNDP, European Union, WFP, UNICEF, Reuters, BBC &mdash; Updates on refresh</p>
-</footer>
+<footer>Social Protection Daily — World Bank · UN/UNDP · EU · ILO · OECD · WFP · UNICEF · Reuters · BBC — Auto-refreshes every 30 minutes</footer>
 
 <script>
-// ── SOURCE DEFINITIONS ──
+// ── SOURCES ──
 const SOURCES = [
-  {
-    id: "worldbank",
-    name: "World Bank",
-    color: "#003087",
-    textColor: "white",
-    initials: "WB",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/topic/social-protection",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/news",
-    ]
-  },
-  {
-    id: "un",
-    name: "United Nations / UNDP",
-    color: "#009EDB",
-    textColor: "white",
-    initials: "UN",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/human-rights/feed/rss.xml",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/economic-development/feed/rss.xml",
-    ]
-  },
-  {
-    id: "eu",
-    name: "European Union",
-    color: "#003399",
-    textColor: "#FFD700",
-    initials: "EU",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://ec.europa.eu/social/RssServlet?type=news&lang=en",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://eur-lex.europa.eu/rss/news.xml",
-    ]
-  },
-  {
-    id: "wfp",
-    name: "World Food Programme",
-    color: "#F5A800",
-    textColor: "#0A0A0F",
-    initials: "WFP",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://www.wfp.org/rss.xml",
-    ]
-  },
-  {
-    id: "unicef",
-    name: "UNICEF",
-    color: "#1CABE2",
-    textColor: "white",
-    initials: "UNICEF",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/press-releases/rss",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/stories/rss",
-    ]
-  },
-  {
-    id: "reuters",
-    name: "Reuters",
-    color: "#FF8000",
-    textColor: "white",
-    initials: "R",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.reuters.com/reuters/topNews",
-      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.reuters.com/news/wealth",
-    ]
-  },
-  {
-    id: "bbc",
-    name: "BBC News",
-    color: "#BB1919",
-    textColor: "white",
-    initials: "BBC",
-    feeds: [
-      "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/world/rss.xml",
-      "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/business/rss.xml",
-    ]
-  },
+  { id:"worldbank", name:"World Bank", color:"#003087", textColor:"white", initials:"WB",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/topic/social-protection",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/news"] },
+  { id:"ilo", name:"ILO — Int'l Labour Organization", color:"#00529B", textColor:"white", initials:"ILO",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.ilo.org/global/about-the-ilo/newsroom/news/lang--en/rss.xml",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.social-protection.org/gimi/RssTopic.action?lang=EN"] },
+  { id:"oecd", name:"OECD", color:"#003189", textColor:"white", initials:"OECD",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.oecd.org/newsroom/news.xml",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.oecd-ilibrary.org/rss/content/social-issues-migration-health_13561/rss.xml"] },
+  { id:"un", name:"United Nations / UNDP", color:"#009EDB", textColor:"white", initials:"UN",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/human-rights/feed/rss.xml",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/economic-development/feed/rss.xml"] },
+  { id:"eu", name:"European Union", color:"#003399", textColor:"#FFD700", initials:"EU",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://ec.europa.eu/social/RssServlet?type=news&lang=en"] },
+  { id:"wfp", name:"World Food Programme", color:"#F5A800", textColor:"#0a0a0f", initials:"WFP",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.wfp.org/rss.xml"] },
+  { id:"unicef", name:"UNICEF", color:"#1CABE2", textColor:"white", initials:"UNICEF",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/press-releases/rss",
+           "https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/stories/rss"] },
+  { id:"reuters", name:"Reuters", color:"#FF8000", textColor:"white", initials:"R",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=https://feeds.reuters.com/reuters/topNews"] },
+  { id:"bbc", name:"BBC News", color:"#BB1919", textColor:"white", initials:"BBC",
+    feeds:["https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/world/rss.xml",
+           "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/business/rss.xml"] },
 ];
 
-// ── KEYWORDS FOR RELEVANCE FILTERING ──
-const TOPIC_KEYWORDS = {
-  pension:      ["pension","retirement","social security","contributory","老年","jubil","rente","retraite","老齡"],
-  poverty:      ["poverty","poor","hunger","food insecurity","vulnerability","indigent","destitut","malnutrition","extreme poverty","cash transfer"],
-  disability:   ["disability","disabled","handicap","inclusion","accessibility","special needs","rehabilitation"],
-  unemployment: ["unemployment","jobless","out of work","labor market","labour market","job loss","layoff","redundan","social insurance","unemployment benefit"],
-  family:       ["family","child","children","maternal","maternity","paternity","parental leave","childcare","orphan","youth","adolescent","infant","single parent"],
+// ── KEYWORDS ──
+const TOPIC_KW = {
+  pension:      ["pension","retirement","social security","contributory","old age benefit","annuity","superannuation"],
+  poverty:      ["poverty","poor","hunger","food insecurity","vulnerability","destitut","malnutrition","extreme poverty","cash transfer","safety net"],
+  disability:   ["disability","disabled","handicap","inclusion","accessibility","special needs","rehabilitation","impairment"],
+  unemployment: ["unemployment","jobless","out of work","labor market","labour market","job loss","layoff","redundan","social insurance","unemployment benefit","furlough"],
+  family:       ["family","child","children","maternal","maternity","paternity","parental leave","childcare","orphan","youth","adolescent","infant","single parent","caregiver"],
 };
-
-const ALL_KEYWORDS = [
-  "social protection","social safety net","welfare","benefit","cash transfer",
-  "poverty","pension","disability","unemployment","family","child","hunger",
-  "food security","healthcare","insurance","vulnerable","inequality","social policy",
-  ...Object.values(TOPIC_KEYWORDS).flat()
-];
+const REGION_KW = {
+  africa:  ["africa","nigeria","kenya","ethiopia","ghana","tanzania","uganda","mozambique","senegal","mali","niger","chad","sudan","somalia","cameroon","angola","zambia","zimbabwe","malawi","rwanda","burundi","sierra leone","liberia","guinea","togo","benin"],
+  asia:    ["asia","china","india","bangladesh","pakistan","indonesia","vietnam","philippines","cambodia","myanmar","laos","nepal","sri lanka","afghanistan","yemen","jordan","lebanon","syria","iraq","iran","turkey","central asia","southeast asia","south asia","east asia"],
+  latam:   ["latin america","south america","central america","caribbean","brazil","mexico","colombia","argentina","peru","chile","venezuela","ecuador","bolivia","paraguay","uruguay","guatemala","honduras","nicaragua","haiti","cuba","dominican","el salvador","costa rica"],
+  europe:  ["europe","european","france","germany","italy","spain","poland","romania","greece","portugal","hungary","czech","slovakia","bulgaria","croatia","serbia","ukraine","moldova","albania","north macedonia","kosovo","eu member"],
+};
+const ALL_KW = ["social protection","social safety net","welfare","benefit","cash transfer","poverty","pension","disability","unemployment","family","child","hunger","food security","healthcare","insurance","vulnerable","inequality","social policy","social assistance","social security",...Object.values(TOPIC_KW).flat(),...Object.values(REGION_KW).flat()];
 
 // ── STATE ──
 let allArticles = [];
-let activeFilter = "all";
+let activeTopicFilter = "all";
+let activeRegionFilter = "all";
+let searchQuery = "";
+let favorites = JSON.parse(localStorage.getItem("sp_favorites") || "[]");
+let autoRefreshTimer = null;
+let nextRefreshTime = null;
+const AUTO_REFRESH_MS = 30 * 60 * 1000;
 
 // ── HELPERS ──
-function getTodayDate() {
-  return new Date().toLocaleDateString('en-GB', {
-    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-  });
+function stripHtml(h) { const d = document.createElement("div"); d.innerHTML = h||""; return d.textContent||""; }
+function truncate(s, n) { const c = stripHtml(s); return c.length > n ? c.slice(0,n)+"…" : c; }
+function formatDate(ds) {
+  if (!ds) return "";
+  const d = new Date(ds);
+  if (isNaN(d)) return ds.slice(0,10);
+  const diff = Math.floor((Date.now()-d)/60000);
+  if (diff < 60) return diff <= 1 ? "Just now" : `${diff}m ago`;
+  if (diff < 1440) return `${Math.floor(diff/60)}h ago`;
+  return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});
 }
 
 function getTopics(text) {
-  const lower = text.toLowerCase();
-  const topics = [];
-  for (const [topic, kws] of Object.entries(TOPIC_KEYWORDS)) {
-    if (kws.some(kw => lower.includes(kw))) topics.push(topic);
-  }
-  return topics.length ? topics : ["general"];
+  const l = text.toLowerCase();
+  const t = Object.entries(TOPIC_KW).filter(([,kws])=>kws.some(k=>l.includes(k))).map(([k])=>k);
+  return t.length ? t : ["general"];
+}
+function getRegions(text) {
+  const l = text.toLowerCase();
+  return Object.entries(REGION_KW).filter(([,kws])=>kws.some(k=>l.includes(k))).map(([k])=>k);
+}
+function isRelevant(text) { const l=text.toLowerCase(); return ALL_KW.some(k=>l.includes(k)); }
+
+function tagClass(t) { return {pension:"tag-pension",poverty:"tag-poverty",disability:"tag-disability",unemployment:"tag-unemployment",family:"tag-family",general:"tag-general",africa:"tag-africa",asia:"tag-asia",latam:"tag-latam",europe:"tag-europe"}[t]||"tag-general"; }
+function tagLabel(t) { return {pension:"Pensions",poverty:"Poverty",disability:"Disability",unemployment:"Unemployment",family:"Family",general:"General",africa:"Africa",asia:"Asia",latam:"LatAm",europe:"Europe"}[t]||t; }
+
+function highlight(text, query) {
+  if (!query) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
 }
 
-function isRelevant(text) {
-  const lower = text.toLowerCase();
-  return ALL_KEYWORDS.some(kw => lower.includes(kw));
-}
+function isFavorited(url) { return favorites.some(f=>f.url===url); }
+function saveFavorites() { localStorage.setItem("sp_favorites", JSON.stringify(favorites)); }
 
-function stripHtml(html) {
-  const tmp = document.createElement("div");
-  tmp.innerHTML = html || "";
-  return tmp.textContent || tmp.innerText || "";
-}
-
-function truncate(str, n) {
-  const clean = stripHtml(str);
-  return clean.length > n ? clean.slice(0, n) + "…" : clean;
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  if (isNaN(d)) return dateStr.slice(0, 10);
-  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-}
-
-function tagClass(topic) {
-  const map = { pension:"tag-pension", poverty:"tag-poverty", disability:"tag-disability",
-                unemployment:"tag-unemployment", family:"tag-family", general:"tag-general" };
-  return map[topic] || "tag-general";
-}
-
-function tagLabel(topic) {
-  const map = { pension:"Pensions", poverty:"Poverty", disability:"Disability",
-                unemployment:"Unemployment", family:"Family & Children", general:"General" };
-  return map[topic] || topic;
-}
-
-// ── FETCH A SINGLE RSS FEED ──
+// ── FETCH ──
 async function fetchFeed(url) {
   try {
-    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const res = await fetch(url, {signal: AbortSignal.timeout(8000)});
     const data = await res.json();
     if (data.status !== "ok") return [];
-    return (data.items || []).map(item => ({
-      title:   item.title || "",
-      link:    item.link  || item.url || "#",
-      summary: item.description || item.content || "",
-      date:    item.pubDate || item.published || "",
+    return (data.items||[]).map(item => ({
+      title: item.title||"", link: item.link||item.url||"#",
+      summary: item.description||item.content||"", date: item.pubDate||item.published||"",
     }));
-  } catch {
-    return [];
-  }
+  } catch { return []; }
 }
 
-// ── FETCH ALL FEEDS FOR A SOURCE ──
 async function fetchSource(source) {
   const results = await Promise.allSettled(source.feeds.map(fetchFeed));
   let items = [];
-  for (const r of results) {
-    if (r.status === "fulfilled") items = items.concat(r.value);
-  }
-  // Deduplicate by title
+  for (const r of results) if (r.status==="fulfilled") items = items.concat(r.value);
   const seen = new Set();
-  items = items.filter(item => {
-    if (seen.has(item.title)) return false;
-    seen.add(item.title);
-    return true;
+  items = items.filter(item => { if(seen.has(item.title)) return false; seen.add(item.title); return true; });
+  items = items.filter(item => isRelevant(item.title+" "+stripHtml(item.summary)));
+  return items.map(item => {
+    const fullText = item.title+" "+stripHtml(item.summary);
+    return { ...item, sourceId: source.id, sourceName: source.name,
+      topics: getTopics(fullText), regions: getRegions(fullText) };
   });
-  // Filter for relevance
-  items = items.filter(item => isRelevant(item.title + " " + stripHtml(item.summary)));
-  // Add metadata
-  return items.map(item => ({
-    ...item,
-    sourceId: source.id,
-    sourceName: source.name,
-    topics: getTopics(item.title + " " + stripHtml(item.summary)),
-  }));
 }
 
 // ── RENDER ──
-function renderArticleCard(article) {
-  const tags = article.topics.map(t =>
-    `<span class="tag ${tagClass(t)}">${tagLabel(t)}</span>`
-  ).join("");
+function renderCard(article) {
+  const faved = isFavorited(article.link);
+  const topicTags = article.topics.map(t=>`<span class="tag ${tagClass(t)}">${tagLabel(t)}</span>`).join("");
+  const regionTags = article.regions.map(t=>`<span class="tag ${tagClass(t)}">${tagLabel(t)}</span>`).join("");
+  const titleHl = highlight(article.title, searchQuery);
+  const summaryHl = highlight(truncate(article.summary,160), searchQuery);
+  const topicsStr = article.topics.join(",");
+  const regionsStr = article.regions.join(",") || "global";
 
-  return `
-    <div class="article-card" data-topics="${article.topics.join(",")}">
-      <div class="article-tags">${tags}</div>
-      <div class="article-title">
-        <a href="${article.link}" target="_blank" rel="noopener">${article.title}</a>
-      </div>
-      <div class="article-summary">${truncate(article.summary, 160)}</div>
-      <div class="article-meta">
-        <span class="article-date">${formatDate(article.date)}</span>
-        <span>${article.sourceName}</span>
-      </div>
-    </div>`;
+  return `<div class="article-card${faved?' favorited':''}" data-topics="${topicsStr}" data-regions="${regionsStr}" data-url="${article.link}">
+    <div class="card-top">
+      <div class="article-tags">${topicTags}${regionTags}</div>
+      <button class="favorite-btn${faved?' active':''}" onclick="toggleFavorite(this,'${article.link.replace(/'/g,"\\'")}','${article.title.replace(/'/g,"\\'").replace(/"/g,"&quot;")}','${article.sourceName}')" title="${faved?'Remove from':'Add to'} favorites">★</button>
+    </div>
+    <div class="article-title"><a href="${article.link}" target="_blank" rel="noopener">${titleHl}</a></div>
+    <div class="article-summary">${summaryHl}</div>
+    <div class="article-meta"><span>${formatDate(article.date)}</span><span>${article.sourceName}</span></div>
+  </div>`;
 }
 
-function renderSourceSection(source, articles) {
+function renderSection(sourceId, articles) {
   if (!articles.length) return "";
-  const src = SOURCES.find(s => s.id === source);
-  const cardsHtml = articles.map(renderArticleCard).join("");
-  return `
-    <div class="source-section" data-source="${source}">
-      <div class="source-header">
-        <div class="source-logo" style="background:${src.color};color:${src.textColor}">${src.initials}</div>
-        <span class="source-name">${src.name}</span>
-        <span class="source-count">${articles.length} articles</span>
-      </div>
-      <div class="articles-grid">${cardsHtml}</div>
-    </div>`;
+  const src = SOURCES.find(s=>s.id===sourceId);
+  return `<div class="source-section" data-source="${sourceId}">
+    <div class="source-header">
+      <div class="source-logo" style="background:${src.color};color:${src.textColor}">${src.initials}</div>
+      <span class="source-name">${src.name}</span>
+      <span class="source-count">${articles.length} articles</span>
+    </div>
+    <div class="articles-grid">${articles.map(renderCard).join("")}</div>
+  </div>`;
 }
 
-function applyFilter(filter) {
-  activeFilter = filter;
-  document.querySelectorAll(".filter-chip").forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.filter === filter);
-  });
+// ── FILTERS + SEARCH ──
+function applyFiltersAndSearch() {
+  const q = searchQuery.toLowerCase().trim();
+  let visible = 0;
 
-  const cards = document.querySelectorAll(".article-card");
-  cards.forEach(card => {
-    const topics = card.dataset.topics || "";
-    const visible = filter === "all" || topics.includes(filter);
-    card.style.display = visible ? "" : "none";
+  document.querySelectorAll(".article-card").forEach(card => {
+    const topics  = card.dataset.topics  || "";
+    const regions = card.dataset.regions || "";
+    const titleEl = card.querySelector(".article-title");
+    const summEl  = card.querySelector(".article-summary");
+
+    const topicOk  = activeTopicFilter  === "all" || topics.includes(activeTopicFilter);
+    const regionOk = activeRegionFilter === "all" || regions.includes(activeRegionFilter);
+    const textContent = (titleEl?.textContent||"") + " " + (summEl?.textContent||"");
+    const searchOk = !q || textContent.toLowerCase().includes(q);
+
+    const show = topicOk && regionOk && searchOk;
+    card.classList.toggle("hidden", !show);
+    if (show) visible++;
   });
 
   // Hide empty source sections
-  document.querySelectorAll(".source-section").forEach(section => {
-    const visibleCards = section.querySelectorAll(".article-card:not([style*='none'])");
-    section.style.display = visibleCards.length ? "" : "none";
+  document.querySelectorAll(".source-section").forEach(sec => {
+    const hasVisible = sec.querySelectorAll(".article-card:not(.hidden)").length > 0;
+    sec.style.display = hasVisible ? "" : "none";
   });
 
-  // Update stats
-  const visible = [...cards].filter(c => c.style.display !== "none").length;
+  const noRes = document.getElementById("no-results");
+  noRes.style.display = visible === 0 ? "block" : "none";
+
+  const filterLabel = activeTopicFilter !== "all" ? activeTopicFilter : (activeRegionFilter !== "all" ? activeRegionFilter : "All");
+  const searchLabel = q ? ` · Search: "${q}"` : "";
   document.getElementById("stats-line").innerHTML =
-    `Showing <strong>${visible}</strong> articles · Filter: <strong>${filter === "all" ? "All Topics" : filter}</strong>`;
+    `<strong>${visible}</strong> articles · <strong>${filterLabel}</strong>${searchLabel}`;
+  document.getElementById("search-count").textContent = q ? `${visible} results` : "";
 }
 
+// ── SEARCH ──
+document.getElementById("search-input").addEventListener("input", function() {
+  searchQuery = this.value;
+  document.getElementById("search-clear").classList.toggle("visible", searchQuery.length > 0);
+  applyFiltersAndSearch();
+});
+function clearSearch() {
+  searchQuery = "";
+  document.getElementById("search-input").value = "";
+  document.getElementById("search-clear").classList.remove("visible");
+  document.getElementById("search-count").textContent = "";
+  applyFiltersAndSearch();
+}
+
+// ── FILTER CHIPS ──
+document.querySelectorAll(".filter-chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const type = btn.dataset.type;
+    const filter = btn.dataset.filter;
+    document.querySelectorAll(`.filter-chip[data-type="${type}"]`).forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    if (type === "topic") activeTopicFilter = filter;
+    else activeRegionFilter = filter;
+    applyFiltersAndSearch();
+  });
+});
+
+// ── FAVORITES ──
+function toggleFavorite(btn, url, title, source) {
+  if (isFavorited(url)) {
+    favorites = favorites.filter(f => f.url !== url);
+    btn.classList.remove("active");
+    btn.closest(".article-card").classList.remove("favorited");
+  } else {
+    favorites.push({url, title, source, savedAt: new Date().toISOString()});
+    btn.classList.add("active");
+    btn.closest(".article-card").classList.add("favorited");
+  }
+  saveFavorites();
+  updateFavBadge();
+  if (document.getElementById("favorites-panel").classList.contains("visible")) renderFavPanel();
+}
+
+function updateFavBadge() {
+  const badge = document.getElementById("fav-count-badge");
+  badge.textContent = favorites.length ? `(${favorites.length})` : "";
+}
+
+function toggleFavoritesPanel() {
+  const panel = document.getElementById("favorites-panel");
+  const btn = document.getElementById("favorites-btn");
+  panel.classList.toggle("visible");
+  btn.classList.toggle("active");
+  if (panel.classList.contains("visible")) renderFavPanel();
+}
+
+function renderFavPanel() {
+  const list = document.getElementById("fav-list");
+  if (!favorites.length) { list.innerHTML = '<p class="fav-empty">No saved articles yet. Click ★ on any article to save it.</p>'; return; }
+  list.innerHTML = favorites.map(f => `
+    <div class="fav-item">
+      <a href="${f.url}" target="_blank" rel="noopener">${f.title}</a>
+      <span class="fav-source">${f.source}</span>
+      <button class="fav-remove" onclick="removeFav('${f.url.replace(/'/g,"\\'")}')">✕</button>
+    </div>`).join("");
+}
+
+function removeFav(url) {
+  favorites = favorites.filter(f => f.url !== url);
+  saveFavorites();
+  updateFavBadge();
+  renderFavPanel();
+  // Update card star if visible
+  document.querySelectorAll(`.article-card[data-url="${CSS.escape(url)}"]`).forEach(card => {
+    card.classList.remove("favorited");
+    const btn = card.querySelector(".favorite-btn");
+    if (btn) btn.classList.remove("active");
+  });
+}
+
+// ── AUTO-REFRESH COUNTDOWN ──
+function scheduleAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  nextRefreshTime = Date.now() + AUTO_REFRESH_MS;
+  autoRefreshTimer = setInterval(() => {
+    const remaining = Math.max(0, nextRefreshTime - Date.now());
+    const mins = Math.floor(remaining / 60000);
+    const secs = Math.floor((remaining % 60000) / 1000);
+    document.getElementById("next-refresh-label").textContent =
+      remaining > 0 ? `Next refresh: ${mins}:${secs.toString().padStart(2,"0")}` : "Refreshing…";
+    if (remaining <= 0) loadAllFeeds();
+  }, 1000);
+}
+
+// ── TICKER ──
 function updateTicker(articles) {
   const ticker = document.getElementById("ticker");
-  const titles = articles.slice(0, 20).map(a =>
-    `<span class="ticker-item">${a.sourceName}: ${a.title}</span>`
-  );
-  // Duplicate for seamless loop
-  ticker.innerHTML = [...titles, ...titles].join("");
+  const titles = articles.slice(0,20).map(a=>`<span class="ticker-item">${a.sourceName}: ${a.title}</span>`);
+  ticker.innerHTML = [...titles,...titles].join("");
 }
 
 // ── MAIN LOAD ──
@@ -693,81 +531,43 @@ async function loadAllFeeds() {
   const btn = document.getElementById("refresh-btn");
   const spin = document.getElementById("spin-icon");
   const main = document.getElementById("main-content");
-  const errorBanner = document.getElementById("error-banner");
 
-  btn.classList.add("loading");
-  btn.disabled = true;
-  spin.classList.add("active");
-  errorBanner.classList.remove("visible");
-  document.getElementById("stats-line").textContent = "Fetching...";
+  btn.disabled = true; spin.classList.add("active");
+  document.getElementById("stats-line").textContent = "Fetching…";
+  main.innerHTML = `<div class="loading-state"><span class="big-spinner">⟳</span><p>Fetching latest dispatches from global sources…</p></div>`;
+  document.getElementById("no-results").style.display = "none";
 
-  main.innerHTML = `
-    <div class="loading-state">
-      <span class="big-spinner">⟳</span>
-      <p>Fetching latest dispatches from global sources…</p>
-    </div>`;
+  const sourceResults = await Promise.allSettled(SOURCES.map(fetchSource));
+  allArticles = [];
+  const bySource = {};
 
-  try {
-    const sourceResults = await Promise.allSettled(
-      SOURCES.map(s => fetchSource(s))
-    );
+  sourceResults.forEach((result, i) => {
+    const sid = SOURCES[i].id;
+    const articles = result.status==="fulfilled" ? result.value : [];
+    articles.sort((a,b)=>new Date(b.date)-new Date(a.date));
+    bySource[sid] = articles.slice(0,12);
+    allArticles = allArticles.concat(bySource[sid]);
+  });
 
-    allArticles = [];
-    const bySource = {};
-
-    sourceResults.forEach((result, i) => {
-      const sourceId = SOURCES[i].id;
-      const articles = result.status === "fulfilled" ? result.value : [];
-      bySource[sourceId] = articles;
-      allArticles = allArticles.concat(articles);
-    });
-
-    // Sort each source by date desc
-    for (const key of Object.keys(bySource)) {
-      bySource[key].sort((a, b) => new Date(b.date) - new Date(a.date));
-      bySource[key] = bySource[key].slice(0, 12); // max 12 per source
-    }
-
-    if (allArticles.length === 0) {
-      main.innerHTML = `
-        <div class="empty-state">
-          <p>No social protection articles found at this time.<br>
-          This may be due to browser CORS restrictions. Try opening in a different browser or check your connection.</p>
-        </div>`;
-      errorBanner.textContent = "Note: Some feeds may be blocked by browser security (CORS). Results may be partial.";
-      errorBanner.classList.add("visible");
-    } else {
-      let html = "";
-      for (const source of SOURCES) {
-        html += renderSourceSection(source.id, bySource[source.id] || []);
-      }
-      main.innerHTML = html || `<div class="empty-state"><p>No relevant articles found.</p></div>`;
-      updateTicker(allArticles);
-      applyFilter(activeFilter);
-    }
-
-    const total = allArticles.length;
-    document.getElementById("stats-line").innerHTML =
-      `<strong>${total}</strong> articles · Last updated: <strong>${new Date().toLocaleTimeString()}</strong>`;
-
-  } catch (err) {
-    main.innerHTML = `<div class="empty-state"><p>Error loading feeds. Please try again.</p></div>`;
-    errorBanner.textContent = `Error: ${err.message}`;
-    errorBanner.classList.add("visible");
-  } finally {
-    btn.classList.remove("loading");
-    btn.disabled = false;
-    spin.classList.remove("active");
+  if (!allArticles.length) {
+    main.innerHTML = `<div class="empty-state"><p>No articles found at this time.<br>Some RSS feeds may be restricted by your browser (CORS).<br>Try refreshing or use a different browser.</p></div>`;
+  } else {
+    main.innerHTML = SOURCES.map(s => renderSection(s.id, bySource[s.id]||[])).join("") ||
+      `<div class="empty-state"><p>No relevant articles found.</p></div>`;
+    updateTicker(allArticles);
+    applyFiltersAndSearch();
   }
+
+  document.getElementById("stats-line").innerHTML =
+    `<strong>${allArticles.length}</strong> articles · Updated <strong>${new Date().toLocaleTimeString()}</strong>`;
+
+  btn.disabled = false; spin.classList.remove("active");
+  scheduleAutoRefresh();
 }
 
-// ── FILTER CHIPS ──
-document.querySelectorAll(".filter-chip").forEach(btn => {
-  btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
-});
-
 // ── INIT ──
-document.getElementById("today-date").textContent = getTodayDate();
+document.getElementById("today-date").textContent = new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+updateFavBadge();
 loadAllFeeds();
 </script>
 </body>
