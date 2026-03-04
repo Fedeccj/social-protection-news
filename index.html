@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Protection Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0a0a0f;
+    --paper: #f5f2eb;
+    --accent: #c8392b;
+    --accent2: #1a5276;
+    --gold: #b7860b;
+    --muted: #6b6560;
+    --rule: #d4cfc6;
+    --card-bg: #faf8f3;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+  }
+
+  /* ── MASTHEAD ── */
+  .masthead {
+    border-bottom: 3px double var(--ink);
+    padding: 0 2rem;
+    background: var(--paper);
+  }
+  .masthead-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0;
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .masthead-top .date-line { font-weight: 500; }
+  .masthead-title {
+    text-align: center;
+    padding: 1.2rem 0 0.8rem;
+  }
+  .masthead-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .masthead-title .subtitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.4rem;
+  }
+  .masthead-title .edition-bar {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 0.8rem;
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .edition-bar span { display: flex; align-items: center; gap: 0.3rem; }
+
+  /* ── FILTERS BAR ── */
+  .filters-bar {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0.7rem 2rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .filters-bar .label {
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #888;
+    margin-right: 0.5rem;
+  }
+  .filter-chip {
+    padding: 0.25rem 0.8rem;
+    border: 1px solid #444;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.15s;
+    background: transparent;
+    color: #ccc;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .filter-chip.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: white;
+  }
+  .filter-chip:hover:not(.active) { border-color: #888; color: white; }
+
+  /* ── CONTROLS ── */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 2rem;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.2rem;
+    background: var(--ink);
+    color: var(--paper);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .refresh-btn:hover { background: var(--accent); }
+  .refresh-btn.loading { opacity: 0.6; cursor: not-allowed; }
+  .spin { display: inline-block; }
+  .spin.active { animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .stats-line {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+  .stats-line strong { color: var(--ink); }
+
+  /* ── MAIN GRID ── */
+  .content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+  }
+
+  /* Source sections */
+  .source-section {
+    margin-bottom: 2.5rem;
+    animation: fadeIn 0.4s ease both;
+  }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+  .source-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 2px solid var(--ink);
+  }
+  .source-logo {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    flex-shrink: 0;
+  }
+  .source-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .source-count {
+    margin-left: auto;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: var(--rule);
+    padding: 0.2rem 0.6rem;
+  }
+
+  /* Article cards */
+  .articles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .article-card {
+    background: var(--card-bg);
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .article-card:hover { background: white; }
+  .article-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 100%;
+    background: transparent;
+    transition: background 0.15s;
+  }
+  .article-card:hover::before { background: var(--accent); }
+
+  .article-tags {
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.6rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid currentColor;
+    border-radius: 1px;
+  }
+  .tag-pension    { color: #8e44ad; }
+  .tag-poverty    { color: var(--accent); }
+  .tag-disability { color: #27ae60; }
+  .tag-unemployment { color: var(--accent2); }
+  .tag-family     { color: var(--gold); }
+  .tag-general    { color: var(--muted); }
+
+  .article-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .article-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .article-title a:hover { color: var(--accent); }
+
+  .article-summary {
+    font-size: 0.78rem;
+    line-height: 1.6;
+    color: var(--muted);
+    flex: 1;
+  }
+
+  .article-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--rule);
+    margin-top: auto;
+  }
+  .article-date { font-weight: 500; }
+
+  /* ── LOADING / EMPTY ── */
+  .loading-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .loading-state .big-spinner {
+    font-size: 2rem;
+    animation: spin 1s linear infinite;
+    display: block;
+    margin-bottom: 1rem;
+  }
+  .loading-state p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-style: italic;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem 2rem;
+    border: 1px dashed var(--rule);
+  }
+  .empty-state p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  /* ── ERROR BANNER ── */
+  .error-banner {
+    background: #fdf2f2;
+    border: 1px solid #e8b4b4;
+    border-left: 4px solid var(--accent);
+    padding: 0.8rem 1.2rem;
+    margin: 1rem 2rem;
+    font-size: 0.78rem;
+    color: #922b21;
+    display: none;
+  }
+  .error-banner.visible { display: block; }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    background: var(--accent2);
+    color: white;
+    overflow: hidden;
+    padding: 0.4rem 0;
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+  }
+  .ticker-inner {
+    display: flex;
+    gap: 4rem;
+    white-space: nowrap;
+    animation: ticker 40s linear infinite;
+  }
+  @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .ticker-item::before { content: '◆ '; color: rgba(255,255,255,0.5); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 3px double var(--ink);
+    padding: 1rem 2rem;
+    text-align: center;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  @media (max-width: 600px) {
+    .masthead, .filters-bar, .controls, .content { padding-left: 1rem; padding-right: 1rem; }
+    .masthead-title h1 { font-size: 1.8rem; }
+    .articles-grid { grid-template-columns: 1fr; }
+    .edition-bar { gap: 1rem; flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MASTHEAD -->
+<header class="masthead">
+  <div class="masthead-top">
+    <span class="date-line" id="today-date"></span>
+    <span>Global Social Protection Intelligence</span>
+    <span>Vol. I — Daily Edition</span>
+  </div>
+  <div class="masthead-title">
+    <h1>Social Protection<br>Daily</h1>
+    <div class="subtitle">World Bank · UN · EU · ILO · WFP · UNICEF · Reuters · BBC</div>
+    <div class="edition-bar">
+      <span>🌍 Global Coverage</span>
+      <span>📋 Pensions · Poverty · Disability · Unemployment · Family</span>
+      <span>🔄 Live RSS Feeds</span>
+    </div>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner" id="ticker">
+    <span class="ticker-item">Loading latest headlines...</span>
+    <span class="ticker-item">Loading latest headlines...</span>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="label">Filter:</span>
+  <button class="filter-chip active" data-filter="all">All Topics</button>
+  <button class="filter-chip" data-filter="pension">Pensions</button>
+  <button class="filter-chip" data-filter="poverty">Poverty</button>
+  <button class="filter-chip" data-filter="disability">Disability</button>
+  <button class="filter-chip" data-filter="unemployment">Unemployment</button>
+  <button class="filter-chip" data-filter="family">Family & Children</button>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="refresh-btn" id="refresh-btn" onclick="loadAllFeeds()">
+    <span class="spin" id="spin-icon">↻</span>
+    <span>Refresh News</span>
+  </button>
+  <div class="stats-line" id="stats-line">Loading...</div>
+</div>
+
+<div class="error-banner" id="error-banner"></div>
+
+<!-- MAIN CONTENT -->
+<main class="content" id="main-content">
+  <div class="loading-state">
+    <span class="big-spinner">⟳</span>
+    <p>Fetching latest dispatches from global sources...</p>
+  </div>
+</main>
+
+<footer>
+  <p>Social Protection Daily &mdash; Sources: World Bank, UN/UNDP, European Union, WFP, UNICEF, Reuters, BBC &mdash; Updates on refresh</p>
+</footer>
+
+<script>
+// ── SOURCE DEFINITIONS ──
+const SOURCES = [
+  {
+    id: "worldbank",
+    name: "World Bank",
+    color: "#003087",
+    textColor: "white",
+    initials: "WB",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/topic/social-protection",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.worldbank.org/en/rss/news",
+    ]
+  },
+  {
+    id: "un",
+    name: "United Nations / UNDP",
+    color: "#009EDB",
+    textColor: "white",
+    initials: "UN",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/human-rights/feed/rss.xml",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://news.un.org/feed/subscribe/en/news/topic/economic-development/feed/rss.xml",
+    ]
+  },
+  {
+    id: "eu",
+    name: "European Union",
+    color: "#003399",
+    textColor: "#FFD700",
+    initials: "EU",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://ec.europa.eu/social/RssServlet?type=news&lang=en",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://eur-lex.europa.eu/rss/news.xml",
+    ]
+  },
+  {
+    id: "wfp",
+    name: "World Food Programme",
+    color: "#F5A800",
+    textColor: "#0A0A0F",
+    initials: "WFP",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://www.wfp.org/rss.xml",
+    ]
+  },
+  {
+    id: "unicef",
+    name: "UNICEF",
+    color: "#1CABE2",
+    textColor: "white",
+    initials: "UNICEF",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/press-releases/rss",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://www.unicef.org/stories/rss",
+    ]
+  },
+  {
+    id: "reuters",
+    name: "Reuters",
+    color: "#FF8000",
+    textColor: "white",
+    initials: "R",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.reuters.com/reuters/topNews",
+      "https://api.rss2json.com/v1/api.json?rss_url=https://feeds.reuters.com/news/wealth",
+    ]
+  },
+  {
+    id: "bbc",
+    name: "BBC News",
+    color: "#BB1919",
+    textColor: "white",
+    initials: "BBC",
+    feeds: [
+      "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/world/rss.xml",
+      "https://api.rss2json.com/v1/api.json?rss_url=http://feeds.bbci.co.uk/news/business/rss.xml",
+    ]
+  },
+];
+
+// ── KEYWORDS FOR RELEVANCE FILTERING ──
+const TOPIC_KEYWORDS = {
+  pension:      ["pension","retirement","social security","contributory","老年","jubil","rente","retraite","老齡"],
+  poverty:      ["poverty","poor","hunger","food insecurity","vulnerability","indigent","destitut","malnutrition","extreme poverty","cash transfer"],
+  disability:   ["disability","disabled","handicap","inclusion","accessibility","special needs","rehabilitation"],
+  unemployment: ["unemployment","jobless","out of work","labor market","labour market","job loss","layoff","redundan","social insurance","unemployment benefit"],
+  family:       ["family","child","children","maternal","maternity","paternity","parental leave","childcare","orphan","youth","adolescent","infant","single parent"],
+};
+
+const ALL_KEYWORDS = [
+  "social protection","social safety net","welfare","benefit","cash transfer",
+  "poverty","pension","disability","unemployment","family","child","hunger",
+  "food security","healthcare","insurance","vulnerable","inequality","social policy",
+  ...Object.values(TOPIC_KEYWORDS).flat()
+];
+
+// ── STATE ──
+let allArticles = [];
+let activeFilter = "all";
+
+// ── HELPERS ──
+function getTodayDate() {
+  return new Date().toLocaleDateString('en-GB', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+}
+
+function getTopics(text) {
+  const lower = text.toLowerCase();
+  const topics = [];
+  for (const [topic, kws] of Object.entries(TOPIC_KEYWORDS)) {
+    if (kws.some(kw => lower.includes(kw))) topics.push(topic);
+  }
+  return topics.length ? topics : ["general"];
+}
+
+function isRelevant(text) {
+  const lower = text.toLowerCase();
+  return ALL_KEYWORDS.some(kw => lower.includes(kw));
+}
+
+function stripHtml(html) {
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html || "";
+  return tmp.textContent || tmp.innerText || "";
+}
+
+function truncate(str, n) {
+  const clean = stripHtml(str);
+  return clean.length > n ? clean.slice(0, n) + "…" : clean;
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return "";
+  const d = new Date(dateStr);
+  if (isNaN(d)) return dateStr.slice(0, 10);
+  return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function tagClass(topic) {
+  const map = { pension:"tag-pension", poverty:"tag-poverty", disability:"tag-disability",
+                unemployment:"tag-unemployment", family:"tag-family", general:"tag-general" };
+  return map[topic] || "tag-general";
+}
+
+function tagLabel(topic) {
+  const map = { pension:"Pensions", poverty:"Poverty", disability:"Disability",
+                unemployment:"Unemployment", family:"Family & Children", general:"General" };
+  return map[topic] || topic;
+}
+
+// ── FETCH A SINGLE RSS FEED ──
+async function fetchFeed(url) {
+  try {
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    const data = await res.json();
+    if (data.status !== "ok") return [];
+    return (data.items || []).map(item => ({
+      title:   item.title || "",
+      link:    item.link  || item.url || "#",
+      summary: item.description || item.content || "",
+      date:    item.pubDate || item.published || "",
+    }));
+  } catch {
+    return [];
+  }
+}
+
+// ── FETCH ALL FEEDS FOR A SOURCE ──
+async function fetchSource(source) {
+  const results = await Promise.allSettled(source.feeds.map(fetchFeed));
+  let items = [];
+  for (const r of results) {
+    if (r.status === "fulfilled") items = items.concat(r.value);
+  }
+  // Deduplicate by title
+  const seen = new Set();
+  items = items.filter(item => {
+    if (seen.has(item.title)) return false;
+    seen.add(item.title);
+    return true;
+  });
+  // Filter for relevance
+  items = items.filter(item => isRelevant(item.title + " " + stripHtml(item.summary)));
+  // Add metadata
+  return items.map(item => ({
+    ...item,
+    sourceId: source.id,
+    sourceName: source.name,
+    topics: getTopics(item.title + " " + stripHtml(item.summary)),
+  }));
+}
+
+// ── RENDER ──
+function renderArticleCard(article) {
+  const tags = article.topics.map(t =>
+    `<span class="tag ${tagClass(t)}">${tagLabel(t)}</span>`
+  ).join("");
+
+  return `
+    <div class="article-card" data-topics="${article.topics.join(",")}">
+      <div class="article-tags">${tags}</div>
+      <div class="article-title">
+        <a href="${article.link}" target="_blank" rel="noopener">${article.title}</a>
+      </div>
+      <div class="article-summary">${truncate(article.summary, 160)}</div>
+      <div class="article-meta">
+        <span class="article-date">${formatDate(article.date)}</span>
+        <span>${article.sourceName}</span>
+      </div>
+    </div>`;
+}
+
+function renderSourceSection(source, articles) {
+  if (!articles.length) return "";
+  const src = SOURCES.find(s => s.id === source);
+  const cardsHtml = articles.map(renderArticleCard).join("");
+  return `
+    <div class="source-section" data-source="${source}">
+      <div class="source-header">
+        <div class="source-logo" style="background:${src.color};color:${src.textColor}">${src.initials}</div>
+        <span class="source-name">${src.name}</span>
+        <span class="source-count">${articles.length} articles</span>
+      </div>
+      <div class="articles-grid">${cardsHtml}</div>
+    </div>`;
+}
+
+function applyFilter(filter) {
+  activeFilter = filter;
+  document.querySelectorAll(".filter-chip").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.filter === filter);
+  });
+
+  const cards = document.querySelectorAll(".article-card");
+  cards.forEach(card => {
+    const topics = card.dataset.topics || "";
+    const visible = filter === "all" || topics.includes(filter);
+    card.style.display = visible ? "" : "none";
+  });
+
+  // Hide empty source sections
+  document.querySelectorAll(".source-section").forEach(section => {
+    const visibleCards = section.querySelectorAll(".article-card:not([style*='none'])");
+    section.style.display = visibleCards.length ? "" : "none";
+  });
+
+  // Update stats
+  const visible = [...cards].filter(c => c.style.display !== "none").length;
+  document.getElementById("stats-line").innerHTML =
+    `Showing <strong>${visible}</strong> articles · Filter: <strong>${filter === "all" ? "All Topics" : filter}</strong>`;
+}
+
+function updateTicker(articles) {
+  const ticker = document.getElementById("ticker");
+  const titles = articles.slice(0, 20).map(a =>
+    `<span class="ticker-item">${a.sourceName}: ${a.title}</span>`
+  );
+  // Duplicate for seamless loop
+  ticker.innerHTML = [...titles, ...titles].join("");
+}
+
+// ── MAIN LOAD ──
+async function loadAllFeeds() {
+  const btn = document.getElementById("refresh-btn");
+  const spin = document.getElementById("spin-icon");
+  const main = document.getElementById("main-content");
+  const errorBanner = document.getElementById("error-banner");
+
+  btn.classList.add("loading");
+  btn.disabled = true;
+  spin.classList.add("active");
+  errorBanner.classList.remove("visible");
+  document.getElementById("stats-line").textContent = "Fetching...";
+
+  main.innerHTML = `
+    <div class="loading-state">
+      <span class="big-spinner">⟳</span>
+      <p>Fetching latest dispatches from global sources…</p>
+    </div>`;
+
+  try {
+    const sourceResults = await Promise.allSettled(
+      SOURCES.map(s => fetchSource(s))
+    );
+
+    allArticles = [];
+    const bySource = {};
+
+    sourceResults.forEach((result, i) => {
+      const sourceId = SOURCES[i].id;
+      const articles = result.status === "fulfilled" ? result.value : [];
+      bySource[sourceId] = articles;
+      allArticles = allArticles.concat(articles);
+    });
+
+    // Sort each source by date desc
+    for (const key of Object.keys(bySource)) {
+      bySource[key].sort((a, b) => new Date(b.date) - new Date(a.date));
+      bySource[key] = bySource[key].slice(0, 12); // max 12 per source
+    }
+
+    if (allArticles.length === 0) {
+      main.innerHTML = `
+        <div class="empty-state">
+          <p>No social protection articles found at this time.<br>
+          This may be due to browser CORS restrictions. Try opening in a different browser or check your connection.</p>
+        </div>`;
+      errorBanner.textContent = "Note: Some feeds may be blocked by browser security (CORS). Results may be partial.";
+      errorBanner.classList.add("visible");
+    } else {
+      let html = "";
+      for (const source of SOURCES) {
+        html += renderSourceSection(source.id, bySource[source.id] || []);
+      }
+      main.innerHTML = html || `<div class="empty-state"><p>No relevant articles found.</p></div>`;
+      updateTicker(allArticles);
+      applyFilter(activeFilter);
+    }
+
+    const total = allArticles.length;
+    document.getElementById("stats-line").innerHTML =
+      `<strong>${total}</strong> articles · Last updated: <strong>${new Date().toLocaleTimeString()}</strong>`;
+
+  } catch (err) {
+    main.innerHTML = `<div class="empty-state"><p>Error loading feeds. Please try again.</p></div>`;
+    errorBanner.textContent = `Error: ${err.message}`;
+    errorBanner.classList.add("visible");
+  } finally {
+    btn.classList.remove("loading");
+    btn.disabled = false;
+    spin.classList.remove("active");
+  }
+}
+
+// ── FILTER CHIPS ──
+document.querySelectorAll(".filter-chip").forEach(btn => {
+  btn.addEventListener("click", () => applyFilter(btn.dataset.filter));
+});
+
+// ── INIT ──
+document.getElementById("today-date").textContent = getTodayDate();
+loadAllFeeds();
+</script>
+</body>
+</html>
